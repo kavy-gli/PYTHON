@@ -196,24 +196,10 @@ Goodbye!
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome!
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m "Add your feature"`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Open a Pull Request
-
 ---
 
 ## 📄 License
 
 This project doesn't yet include a license file. Add a `LICENSE` (e.g., MIT) to your repository to clarify how others may use, modify, and distribute this code.
 
----
 
-## 👤 Author
-
-Maintained by ** KAVY **. Update this section with your name, GitHub profile, and contact details.
