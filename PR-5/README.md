@@ -216,4 +216,4 @@ This project doesn't yet include a license file. Add a `LICENSE` (e.g., MIT) to 
 
 ## 👤 Author
 
-Maintained by **[Your Name]**. Update this section with your name, GitHub profile, and contact details.
+Maintained by ** KAVY **. Update this section with your name, GitHub profile, and contact details.
