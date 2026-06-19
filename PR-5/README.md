@@ -196,10 +196,5 @@ Goodbye!
 
 ---
 
----
-
-## 📄 License
-
-This project doesn't yet include a license file. Add a `LICENSE` (e.g., MIT) to your repository to clarify how others may use, modify, and distribute this code.
 
 
