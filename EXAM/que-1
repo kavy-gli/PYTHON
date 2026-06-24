@@ -1,0 +1,222 @@
+from datetime import datetime
+import uuid
+import random
+import sys
+
+quotes = [
+    "You've done it! Keep pushing forward.",
+    "Great work! Stay focused.",
+    "Success comes from consistency.",
+    "One more task conquered!",
+    "Keep going, you're doing great!"
+]
+
+class Task:
+    def __init__(self, title, description):
+        if title.strip() == "" or description.strip() == "":
+            raise ValueError("Title and Description cannot be empty!")
+
+        self.task_id = str(uuid.uuid4())[:8]
+        self.title = title
+        self.description = description
+        self.status = "Pending"
+        self.created_on = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    def mark_complete(self):
+        if self.status == "Completed":
+            raise Exception("Task is already completed!")
+
+        self.status = "Completed"
+
+    def display_task(self):
+        print(f"Task ID      : {self.task_id}")
+        print(f"Title        : {self.title}")
+        print(f"Description  : {self.description}")
+        print(f"Status       : {self.status}")
+        print(f"Created On   : {self.created_on}")
+        print("-" * 50)
+
+
+class TaskManager:
+    def __init__(self):
+        self.tasks = []
+
+    def add_task(self):
+        try:
+            print("\n========== ADD TASK ==========\n")
+
+            title = input("Enter Title       : ")
+            description = input("Enter Description : ")
+
+            task = Task(title, description)
+            self.tasks.append(task)
+
+            print("\n[SUCCESS] Task Added Successfully!")
+
+        except ValueError as e:
+            print("\n[ERROR]", e)
+
+    def view_tasks(self):
+        print("\n========== ALL TASKS ==========\n")
+
+        if len(self.tasks) == 0:
+            print("No Tasks Available!")
+            return
+
+        for task in self.tasks:
+            task.display_task()
+
+    def mark_complete(self):
+        try:
+            print("\n========== MARK COMPLETE ==========\n")
+
+            task_id = input("Enter Task ID to mark as complete: ")
+
+            found = False
+
+            for task in self.tasks:
+                if task.task_id == task_id:
+                    task.mark_complete()
+                    found = True
+
+                    print("\n[SUCCESS] Task marked as COMPLETE successfully!")
+                    print("\n[MOTIVATION] \"" + random.choice(quotes) + "\"")
+                    
+                    # Check if all tasks are completed
+                    if self.all_tasks_completed():
+                        self.show_celebration()
+                    break
+
+            if not found:
+                raise Exception("Task ID not found!")
+
+        except Exception as e:
+            print("\n[ERROR]", e)
+    
+    def all_tasks_completed(self):
+        """Check if all tasks are marked as Completed"""
+        if len(self.tasks) == 0:
+            return False
+        return all(task.status == "Completed" for task in self.tasks)
+    
+    def show_celebration(self):
+        """Display celebration message when all tasks are completed"""
+        print("\n" + "*" * 50)
+        print("\n🎉 CONGRATULATIONS! ALL TASKS COMPLETED! 🎉\n")
+        print("You have successfully finished all your tasks!")
+        print("\n" + "*" * 50)
+        print("\nReturning to Main Menu...\n")
+    
+    def reset_tasks(self):
+        """Reset all tasks - clear all completed tasks"""
+        print("\n========== RESET TASKS ==========\n")
+        confirm = input("Are you sure you want to delete all tasks? (yes/no): ")
+        if confirm.lower() == "yes":
+            self.tasks = []
+            print("\n[SUCCESS] All tasks have been deleted!\n")
+        else:
+            print("\n[CANCELLED] Reset cancelled.\n")
+
+    def search_by_status(self):
+        status = input("\nEnter Status (Pending/Completed): ")
+
+        result = {}
+
+        for task in self.tasks:
+            if task.status.lower() == status.lower():
+                result[task.task_id] = task.title
+
+        print("\n========== SEARCH RESULT ==========\n")
+
+        if len(result) == 0:
+            print("No matching tasks found.")
+        else:
+            for key, value in result.items():
+                print(key, "->", value)
+
+    def save_to_file(self):
+        try:
+            file = open("data.txt", "w")
+
+            for task in self.tasks:
+                file.write(
+                    f"{task.task_id}|{task.title}|{task.description}|{task.status}|{task.created_on}\n"
+                )
+
+            file.close()
+
+        except IOError:
+            print("Error while saving file!")
+
+    def load_from_file(self):
+        try:
+            file = open("data.txt", "r")
+
+            for line in file:
+                data = line.strip().split("|")
+
+                if len(data) == 5:
+                    task = Task(data[1], data[2])
+
+                    task.task_id = data[0]
+                    task.status = data[3]
+                    task.created_on = data[4]
+
+                    self.tasks.append(task)
+
+            file.close()
+
+        except FileNotFoundError:
+            pass
+
+        except IOError:
+            print("Error while reading file!")
+
+
+manager = TaskManager()
+manager.load_from_file()
+
+while True:
+
+    print("\n" + "=" * 50)
+    print("          TASK MANAGER SYSTEM")
+    print("=" * 50)
+
+    print("1. Add Task")
+    print("2. View Tasks")
+    print("3. Mark Task Complete")
+    print("4. Search By Status")
+    print("5. Save Tasks")
+    print("6. Reset Tasks")
+    print("7. Exit")
+
+    print("=" * 50)
+
+    choice = input("Enter your choice (1-7): ")
+
+    if choice == "1":
+        manager.add_task()
+
+    elif choice == "2":
+        manager.view_tasks()
+
+    elif choice == "3":
+        manager.mark_complete()
+
+    elif choice == "4":
+        manager.search_by_status()
+
+    elif choice == "5":
+        manager.save_to_file()
+        print("\n[SUCCESS] Tasks saved to data.txt")
+
+    elif choice == "6":
+        manager.reset_tasks()
+
+    elif choice == "7":
+        manager.save_to_file()
+        print("\nThank You For Using Task Manager!")
+        sys.exit(0)
+
+    else:
+        print("\n[ERROR] Invalid Choice!")
